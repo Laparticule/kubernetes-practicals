@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-world
+spec: 
+  containers:
+  - image: sejren/tp-kubernetes
+    name: server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/html
+      readOnly: true
+    ports:
+    - containerPort: 5000
+      protocol: TCP
+  - image: busybox
+    name: generator
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "while true; do echo $RANDOM >> /usr/share/html/text.txt; sleep 5; done"
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/html
+  volumes:
+  - name: html
+    hostPath:
+      path: /usr/share/html
+      type: DirectoryOrCreate

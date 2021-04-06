@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask
+  labels:
+    app: flask-redis
+    type: flask
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      app: flask-redis
+      type: flask
+  template:
+    metadata:
+      labels:
+        app: flask-redis
+        type: flask
+    spec:
+      containers:
+      - image: sejren/flask-counter-app:v1
+        name: flask
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        readinessProbe:
+          periodSeconds: 5
+          initialDelaySeconds: 5
+          successThreshold: 1  
+          httpGet:
+            path: /
+            port: 5000
+        env:
+        - name: REDIS_SERVICE
+          value: redis-service.default.svc.cluster.local

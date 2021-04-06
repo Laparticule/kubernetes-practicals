@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: count
+spec:
+  template:
+    metadata:
+      name: count
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command:
+        - "/bin/sh"
+        - "-c"
+        - "for i in $(seq 1 10); do echo $i; sleep 1; done"
+      restartPolicy: Never
